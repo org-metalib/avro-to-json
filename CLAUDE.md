@@ -23,7 +23,7 @@ mvn compile -DskipTests
 
 ## Architecture
 
-**Parent POM:** `pom.xml` — defines shared dependency versions (Avro 1.12.1, Jackson 2.19.4, JUnit 5.13.4, Picocli 4.7.7).
+**Parent POM:** `pom.xml` — defines shared dependency versions (Avro, Jackson, JUnit, Picocli — see `pom.xml` for exact versions).
 
 ### avro-to-json-core
 
