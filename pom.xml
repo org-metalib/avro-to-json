@@ -12,6 +12,7 @@
     <module>avro-to-json-core</module>
     <module>avro-to-json-cli</module>
     <module>avro-to-json-maven-plugin</module>
+    <module>samples/avro-to-json-maven-plugin-sample</module>
   </modules>
 
   <properties>
