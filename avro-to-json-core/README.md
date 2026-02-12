@@ -1,6 +1,6 @@
 # avro-to-json-core
 
-Java library that converts [Apache Avro](https://avro.apache.org/) schemas to [JSON Schema](https://json-schema.org/).
+Java library that converts [Apache Avro](https://avro.apache.org/) schemas to [JSON Schema](https://json-schema.org/). Also provides a shared `LombokAnnotator` for generating Lombok-annotated POJOs via [jsonschema2pojo](https://github.com/joelittlejohn/jsonschema2pojo).
 
 ## Maven dependency
 
@@ -8,7 +8,7 @@ Java library that converts [Apache Avro](https://avro.apache.org/) schemas to [J
 <dependency>
     <groupId>org.metalib.schema.avro.json</groupId>
     <artifactId>avro-to-json-core</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -22,6 +22,7 @@ Java library that converts [Apache Avro](https://avro.apache.org/) schemas to [J
 - `bytes`/`fixed` as base64-encoded strings
 - JSON Schema **draft-07** and **draft-2020-12**
 - Two conversion modes: **POJO-optimized** (default) and **strict**
+- `LombokAnnotator` — adds `@Data`, `@Builder(toBuilder = true)`, `@NoArgsConstructor`, `@AllArgsConstructor` to jsonschema2pojo-generated classes
 
 ## Usage
 

@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AvroToJsonMavenPluginSampleTest {
 
     private static final Path OUTPUT_DIR = Path.of("target/generated-resources/json-schema");
+    private static final Path POJO_DIR = Path.of("target/generated-sources/avro-pojo");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
@@ -54,5 +55,41 @@ class AvroToJsonMavenPluginSampleTest {
         // Recursive type should use $ref
         assertTrue(root.has("definitions") || root.has("$defs"),
                 "Recursive schema should have definitions");
+    }
+
+    @Test
+    void pojoClassesGenerated() {
+        // Verify POJO source files were generated
+        assertTrue(Files.exists(POJO_DIR), "POJO output directory should exist");
+
+        Path comExampleDir = POJO_DIR.resolve("com/example");
+        assertTrue(Files.exists(comExampleDir.resolve("User.java")),
+                "User.java POJO should be generated");
+        assertTrue(Files.exists(comExampleDir.resolve("Order.java")),
+                "Order.java POJO should be generated");
+        assertTrue(Files.exists(comExampleDir.resolve("Category.java")),
+                "Category.java POJO should be generated");
+    }
+
+    @Test
+    void userPojoContainsLombokAnnotations() throws IOException {
+        Path userJava = POJO_DIR.resolve("com/example/User.java");
+        assertTrue(Files.exists(userJava), "User.java should exist");
+
+        String source = Files.readString(userJava);
+        assertTrue(source.contains("@Data"), "User.java should have @Data annotation");
+        assertTrue(source.contains("@Builder"), "User.java should have @Builder annotation");
+        assertTrue(source.contains("@NoArgsConstructor"), "User.java should have @NoArgsConstructor");
+        assertTrue(source.contains("@AllArgsConstructor"), "User.java should have @AllArgsConstructor");
+    }
+
+    @Test
+    void userPojoContainsJacksonAnnotations() throws IOException {
+        Path userJava = POJO_DIR.resolve("com/example/User.java");
+        assertTrue(Files.exists(userJava), "User.java should exist");
+
+        String source = Files.readString(userJava);
+        assertTrue(source.contains("@JsonProperty"), "User.java should have @JsonProperty annotations");
+        assertTrue(source.contains("@JsonInclude"), "User.java should have @JsonInclude annotation");
     }
 }

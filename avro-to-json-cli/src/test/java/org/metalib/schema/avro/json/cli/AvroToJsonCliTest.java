@@ -10,6 +10,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -161,5 +162,125 @@ public class AvroToJsonCliTest {
         );
 
         assertNotEquals(0, exitCode);
+    }
+
+    @Test
+    public void testGeneratePojoFromFile() throws Exception {
+        Path input = tempDir.resolve("user.avsc");
+        Files.writeString(input, """
+                {
+                  "type": "record",
+                  "name": "User",
+                  "fields": [
+                    {"name": "id", "type": "int"},
+                    {"name": "name", "type": "string"}
+                  ]
+                }
+                """);
+
+        Path pojoOutput = tempDir.resolve("pojo-output");
+
+        int exitCode = new CommandLine(new AvroToJsonCli()).execute(
+                input.toString(),
+                "--generate-pojo",
+                "-p", "com.example",
+                "--pojo-output", pojoOutput.toString()
+        );
+
+        assertEquals(0, exitCode);
+        assertTrue(Files.isDirectory(pojoOutput));
+
+        // Find generated Java files
+        try (Stream<Path> files = Files.walk(pojoOutput)) {
+            long javaFileCount = files.filter(p -> p.toString().endsWith(".java")).count();
+            assertTrue(javaFileCount > 0, "Expected at least one .java file");
+        }
+
+        // Verify the generated file contains Lombok and Jackson annotations
+        Path generatedFile = pojoOutput.resolve("com/example/Schema.java");
+        assertTrue(Files.exists(generatedFile), "Expected Schema.java at " + generatedFile);
+        String content = Files.readString(generatedFile);
+        assertTrue(content.contains("import lombok.Data;"), "Expected lombok.Data import");
+        assertTrue(content.contains("import lombok.Builder;"), "Expected lombok.Builder import");
+        assertTrue(content.contains("import lombok.NoArgsConstructor;"), "Expected lombok.NoArgsConstructor import");
+        assertTrue(content.contains("import lombok.AllArgsConstructor;"), "Expected lombok.AllArgsConstructor import");
+        assertTrue(content.contains("@Data"), "Expected @Data annotation");
+        assertTrue(content.contains("@Builder"), "Expected @Builder annotation");
+        assertTrue(content.contains("@JsonProperty"), "Expected @JsonProperty annotation");
+    }
+
+    @Test
+    public void testGeneratePojoNoLombok() throws Exception {
+        Path input = tempDir.resolve("user.avsc");
+        Files.writeString(input, """
+                {
+                  "type": "record",
+                  "name": "User",
+                  "fields": [
+                    {"name": "id", "type": "int"},
+                    {"name": "name", "type": "string"}
+                  ]
+                }
+                """);
+
+        Path pojoOutput = tempDir.resolve("pojo-no-lombok");
+
+        int exitCode = new CommandLine(new AvroToJsonCli()).execute(
+                input.toString(),
+                "--generate-pojo",
+                "--no-lombok",
+                "-p", "com.example",
+                "--pojo-output", pojoOutput.toString()
+        );
+
+        assertEquals(0, exitCode);
+
+        Path generatedFile = pojoOutput.resolve("com/example/Schema.java");
+        assertTrue(Files.exists(generatedFile), "Expected Schema.java at " + generatedFile);
+        String content = Files.readString(generatedFile);
+        assertFalse(content.contains("import lombok.Data;"), "Should not import lombok.Data");
+        assertFalse(content.contains("import lombok.Builder;"), "Should not import lombok.Builder");
+        assertTrue(content.contains("@JsonProperty"), "Expected @JsonProperty annotation");
+        // With no-lombok, getters/setters/toString/hashCode should be generated
+        assertTrue(content.contains("getId"), "Expected getter methods when no-lombok");
+    }
+
+    @Test
+    public void testGeneratePojoFromRegistry() throws Exception {
+        String avroSchema = """
+                {"type":"record","name":"User","fields":[{"name":"id","type":"int"},{"name":"name","type":"string"}]}""";
+
+        HttpServer server = HttpServer.create(new InetSocketAddress(0), 0);
+        int port = server.getAddress().getPort();
+        server.createContext("/subjects/User/versions/latest/schema", exchange -> {
+            byte[] response = avroSchema.getBytes(StandardCharsets.UTF_8);
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, response.length);
+            exchange.getResponseBody().write(response);
+            exchange.getResponseBody().close();
+        });
+        server.start();
+
+        try {
+            Path pojoOutput = tempDir.resolve("pojo-registry");
+
+            int exitCode = new CommandLine(new AvroToJsonCli()).execute(
+                    "--registry", "http://localhost:" + port,
+                    "--subject", "User",
+                    "--generate-pojo",
+                    "-p", "com.example",
+                    "--pojo-output", pojoOutput.toString()
+            );
+
+            assertEquals(0, exitCode);
+            assertTrue(Files.isDirectory(pojoOutput));
+
+            try (Stream<Path> files = Files.walk(pojoOutput)) {
+                long javaFileCount = files.filter(p -> p.toString().endsWith(".java")).count();
+                assertTrue(javaFileCount > 0, "Expected at least one .java file");
+            }
+        } finally {
+            server.stop(0);
+        }
     }
 }
