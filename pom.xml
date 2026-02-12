@@ -3,7 +3,7 @@
   <groupId>org.metalib.schema.avro.json</groupId>
   <artifactId>avro-to-json</artifactId>
   <packaging>pom</packaging>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <name>avro-to-json</name>
   <description>Converts Apache Avro schemas to JSON Schema.</description>
   <url>https://github.com/org-metalib/avro-to-json</url>
