@@ -46,3 +46,14 @@ CLI wrapper using Picocli (`org.metalib.schema.avro.json.cli`). Packaged as a fa
   - Schema Registry: `--registry <url> --subject <name> [--version <v>]`.
 - Flags: `-o/--output` (file output, otherwise stdout), `--strict` (strict mode), `--draft` (draft-07 or draft-2020-12).
 - `SchemaRegistryClient` — fetches Avro schemas from Confluent Schema Registry via HTTP (`/subjects/{subject}/versions/{version}/schema`).
+
+### avro-to-json-maven-plugin
+
+Maven plugin (`org.metalib.schema.avro.json.maven`). Packaging: `maven-plugin`.
+
+- `AvroToJsonMojo` — goal `generate`, default phase `GENERATE_SOURCES`. Scans `sourceDirectory` for `.avsc` files, converts each to JSON Schema in `outputDirectory`.
+- Parameters (all configurable via `<configuration>` or `-Davro-to-json.*`):
+  - `sourceDirectory` (default: `src/main/avro`) — directory containing `.avsc` files.
+  - `outputDirectory` (default: `target/generated-resources/json-schema`) — output for `.json` files.
+  - `strict` (default: `false`) — use strict mode.
+  - `draft` (default: `draft-07`) — JSON Schema draft version.

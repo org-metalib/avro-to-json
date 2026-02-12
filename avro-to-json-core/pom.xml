@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>avro-to-json-core</artifactId>
+    <name>avro-to-json-core</name>
 
     <dependencies>
         <dependency>
