@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.metalib.schema.avro.json</groupId>
         <artifactId>avro-to-json</artifactId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>0.0.2</version>
     </parent>
 
     <artifactId>avro-to-json-core</artifactId>
