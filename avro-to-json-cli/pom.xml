@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.metalib.schema.avro.json</groupId>
     <artifactId>avro-to-json</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4-SNAPSHOT</version>
   </parent>
   <artifactId>avro-to-json-cli</artifactId>
   <name>avro-to-json-cli</name>
