@@ -11,10 +11,43 @@
     </parent>
 
     <artifactId>avro-to-json-maven-plugin-sample</artifactId>
-    <name>avro-to-json-maven-plugin</name>
-    <description>Maven plugin sample.</description>
+    <name>avro-to-json-maven-plugin-sample</name>
+    <description>Sample project demonstrating avro-to-json-maven-plugin usage.</description>
 
-    <properties>
-    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.metalib.schema.avro.json</groupId>
+                <artifactId>avro-to-json-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-json-schema</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

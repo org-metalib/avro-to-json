@@ -1,0 +1,14 @@
+{
+  "type": "record",
+  "name": "Order",
+  "namespace": "com.example",
+  "fields": [
+    {"name": "orderId", "type": {"type": "string", "logicalType": "uuid"}},
+    {"name": "userId", "type": "int"},
+    {"name": "amount", "type": {"type": "bytes", "logicalType": "decimal", "precision": 10, "scale": 2}},
+    {"name": "items", "type": {"type": "array", "items": "string"}},
+    {"name": "metadata", "type": {"type": "map", "values": "string"}},
+    {"name": "status", "type": {"type": "enum", "name": "OrderStatus", "symbols": ["PENDING", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED"]}},
+    {"name": "placedAt", "type": {"type": "long", "logicalType": "timestamp-millis"}}
+  ]
+}

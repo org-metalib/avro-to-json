@@ -1,0 +1,9 @@
+{
+  "type": "record",
+  "name": "Category",
+  "namespace": "com.example",
+  "fields": [
+    {"name": "name", "type": "string"},
+    {"name": "parent", "type": ["null", "Category"], "default": null}
+  ]
+}
