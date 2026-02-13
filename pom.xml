@@ -36,8 +36,13 @@
     <dependencies>
       <dependency>
         <groupId>org.metalib.schema.avro.json</groupId>
+        <artifactId>avro-to-json-cli</artifactId>
+        <version>0.0.4-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.metalib.schema.avro.json</groupId>
         <artifactId>avro-to-json-core</artifactId>
-        <version>${project.version}</version>
+        <version>0.0.4-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>info.picocli</groupId>
@@ -117,6 +122,11 @@
     </plugins>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.metalib.schema.avro.json</groupId>
+          <artifactId>avro-to-json-maven-plugin</artifactId>
+          <version>0.0.4-SNAPSHOT</version>
+        </plugin>
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
           <version>${maven-source-plugin.version}</version>

@@ -43,7 +43,6 @@
             <plugin>
                 <groupId>org.metalib.schema.avro.json</groupId>
                 <artifactId>avro-to-json-maven-plugin</artifactId>
-                <version>${project.version}</version>
                 <executions>
                     <execution>
                         <id>generate-json-schema</id>
