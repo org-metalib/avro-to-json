@@ -32,8 +32,13 @@ public class LombokAnnotator extends AbstractAnnotator {
         clazz.annotate(clazz.owner().ref("lombok.Data"));
         JAnnotationUse builder = clazz.annotate(clazz.owner().ref("lombok.Builder"));
         builder.param("toBuilder", true);
-        clazz.annotate(clazz.owner().ref("lombok.NoArgsConstructor"));
-        if (!clazz.fields().isEmpty()) {
+        // For fieldless classes (e.g. map types), @Data already generates a no-arg
+        // constructor via @RequiredArgsConstructor, so adding @NoArgsConstructor or
+        // @AllArgsConstructor would cause a duplicate constructor error.
+        boolean hasProperties = propertiesNode != null && propertiesNode.size() > 0;
+        boolean hasFields = !clazz.fields().isEmpty();
+        if (hasProperties && hasFields) {
+            clazz.annotate(clazz.owner().ref("lombok.NoArgsConstructor"));
             clazz.annotate(clazz.owner().ref("lombok.AllArgsConstructor"));
         }
     }

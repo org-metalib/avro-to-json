@@ -74,6 +74,14 @@ public class AvroToJsonCli implements Callable<Integer> {
     @Option(names = {"--no-lombok"}, description = "Disable Lombok annotations (only use Jackson).")
     private boolean noLombok;
 
+    @Option(names = {"--annotation-style"}, defaultValue = "jackson",
+            description = "Annotation style for generated POJOs: jackson, jackson2, or jackson3 (default: jackson).")
+    private String annotationStyle;
+
+    @Option(names = {"--source-type"}, defaultValue = "jsonSchema",
+            description = "Source type: jsonSchema, yamlSchema, json, or yaml (default: jsonSchema).")
+    private String sourceType;
+
     @Override
     public Integer call() throws Exception {
         String avroSchema;
@@ -174,7 +182,7 @@ public class AvroToJsonCli implements Callable<Integer> {
 
                 @Override
                 public AnnotationStyle getAnnotationStyle() {
-                    return AnnotationStyle.JACKSON;
+                    return AnnotationStyle.valueOf(annotationStyle.toUpperCase());
                 }
 
                 @Override
@@ -184,7 +192,7 @@ public class AvroToJsonCli implements Callable<Integer> {
 
                 @Override
                 public SourceType getSourceType() {
-                    return SourceType.JSONSCHEMA;
+                    return parseSourceType(sourceType);
                 }
 
                 @Override
@@ -287,6 +295,16 @@ public class AvroToJsonCli implements Callable<Integer> {
         @Override public boolean isTraceEnabled() { return false; }
         @Override public boolean isWarnEnabled() { return false; }
         @Override public void trace(String msg) {}
+    }
+
+    private static SourceType parseSourceType(String value) {
+        return switch (value) {
+            case "jsonSchema" -> SourceType.JSONSCHEMA;
+            case "yamlSchema" -> SourceType.YAMLSCHEMA;
+            case "json" -> SourceType.JSON;
+            case "yaml" -> SourceType.YAML;
+            default -> SourceType.valueOf(value.toUpperCase());
+        };
     }
 
     public static void main(String[] args) {

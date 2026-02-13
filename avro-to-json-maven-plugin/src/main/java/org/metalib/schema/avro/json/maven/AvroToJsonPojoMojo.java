@@ -83,6 +83,18 @@ public class AvroToJsonPojoMojo extends AbstractMojo {
     @Parameter(property = "avro-to-json.useLombok", defaultValue = "true")
     private boolean useLombok;
 
+    /**
+     * Annotation style for generated POJOs: {@code jackson}, {@code jackson2}, or {@code jackson3}.
+     */
+    @Parameter(property = "avro-to-json.annotationStyle", defaultValue = "jackson2")
+    private String annotationStyle;
+
+    /**
+     * Source type for jsonschema2pojo: {@code jsonSchema}, {@code yamlSchema}, {@code json}, or {@code yaml}.
+     */
+    @Parameter(property = "avro-to-json.sourceType", defaultValue = "jsonSchema")
+    private String sourceType;
+
     @Override
     public void execute() throws MojoExecutionException {
         if (!sourceDirectory.isDirectory()) {
@@ -163,7 +175,7 @@ public class AvroToJsonPojoMojo extends AbstractMojo {
 
             @Override
             public AnnotationStyle getAnnotationStyle() {
-                return AnnotationStyle.JACKSON;
+                return AnnotationStyle.valueOf(annotationStyle.toUpperCase());
             }
 
             @Override
@@ -173,7 +185,7 @@ public class AvroToJsonPojoMojo extends AbstractMojo {
 
             @Override
             public SourceType getSourceType() {
-                return SourceType.JSONSCHEMA;
+                return parseSourceType(sourceType);
             }
 
             // Lombok handles these — disable jsonschema2pojo generation
@@ -304,5 +316,15 @@ public class AvroToJsonPojoMojo extends AbstractMojo {
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to generate POJO classes from JSON Schema", e);
         }
+    }
+
+    private static SourceType parseSourceType(String value) {
+        return switch (value) {
+            case "jsonSchema" -> SourceType.JSONSCHEMA;
+            case "yamlSchema" -> SourceType.YAMLSCHEMA;
+            case "json" -> SourceType.JSON;
+            case "yaml" -> SourceType.YAML;
+            default -> SourceType.valueOf(value.toUpperCase());
+        };
     }
 }

@@ -1,5 +1,8 @@
 package org.metalib.schema.avro.json.sample;
 
+import com.example.Category;
+import com.example.Order;
+import com.example.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -7,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -91,5 +95,138 @@ class AvroToJsonMavenPluginSampleTest {
         String source = Files.readString(userJava);
         assertTrue(source.contains("@JsonProperty"), "User.java should have @JsonProperty annotations");
         assertTrue(source.contains("@JsonInclude"), "User.java should have @JsonInclude annotation");
+    }
+
+    // --- Lombok-generated code tests ---
+
+    @Test
+    void userBuilderAndGetters() {
+        User user = User.builder()
+                .id(1)
+                .username("alice")
+                .email("alice@example.com")
+                .createdAt(1700000000)
+                .build();
+
+        assertEquals(1, user.getId());
+        assertEquals("alice", user.getUsername());
+        assertEquals("alice@example.com", user.getEmail());
+        assertEquals(1700000000, user.getCreatedAt());
+    }
+
+    @Test
+    void userSetters() {
+        User user = new User();
+        user.setId(2);
+        user.setUsername("bob");
+
+        assertEquals(2, user.getId());
+        assertEquals("bob", user.getUsername());
+    }
+
+    @Test
+    void userEqualsAndHashCode() {
+        User a = User.builder().id(1).username("alice").build();
+        User b = User.builder().id(1).username("alice").build();
+        User c = User.builder().id(2).username("carol").build();
+
+        assertEquals(a, b);
+        assertEquals(a.hashCode(), b.hashCode());
+        assertNotEquals(a, c);
+    }
+
+    @Test
+    void userToString() {
+        User user = User.builder().id(1).username("alice").build();
+        String str = user.toString();
+
+        assertTrue(str.contains("id=1"));
+        assertTrue(str.contains("username=alice"));
+    }
+
+    @Test
+    void userToBuilder() {
+        User original = User.builder().id(1).username("alice").email("alice@example.com").build();
+        User copy = original.toBuilder().username("alice2").build();
+
+        assertEquals(1, copy.getId());
+        assertEquals("alice2", copy.getUsername());
+        assertEquals("alice@example.com", copy.getEmail());
+    }
+
+    @Test
+    void userJacksonRoundTrip() throws IOException {
+        User user = User.builder()
+                .id(1)
+                .username("alice")
+                .email("alice@example.com")
+                .createdAt(1700000000)
+                .build();
+
+        String json = MAPPER.writeValueAsString(user);
+        User deserialized = MAPPER.readValue(json, User.class);
+
+        assertEquals(user, deserialized);
+    }
+
+    @Test
+    void orderBuilderWithCollectionsAndEnum() {
+        Order order = Order.builder()
+                .orderId("order-123")
+                .userId(1)
+                .amount(99.99)
+                .items(List.of("item1", "item2"))
+                .status(Order.Status.CONFIRMED)
+                .placedAt(1700000000)
+                .build();
+
+        assertEquals("order-123", order.getOrderId());
+        assertEquals(List.of("item1", "item2"), order.getItems());
+        assertEquals(Order.Status.CONFIRMED, order.getStatus());
+    }
+
+    @Test
+    void orderStatusFromValue() {
+        assertEquals(Order.Status.PENDING, Order.Status.fromValue("PENDING"));
+        assertEquals(Order.Status.SHIPPED, Order.Status.fromValue("SHIPPED"));
+        assertThrows(IllegalArgumentException.class, () -> Order.Status.fromValue("INVALID"));
+    }
+
+    @Test
+    void orderJacksonRoundTrip() throws IOException {
+        Order order = Order.builder()
+                .orderId("order-123")
+                .userId(1)
+                .amount(99.99)
+                .items(List.of("item1", "item2"))
+                .status(Order.Status.DELIVERED)
+                .placedAt(1700000000)
+                .build();
+
+        String json = MAPPER.writeValueAsString(order);
+        Order deserialized = MAPPER.readValue(json, Order.class);
+
+        assertEquals(order.getOrderId(), deserialized.getOrderId());
+        assertEquals(order.getStatus(), deserialized.getStatus());
+        assertEquals(order.getItems(), deserialized.getItems());
+    }
+
+    @Test
+    void categoryBuilderAndRecursiveType() {
+        Category parent = Category.builder().name("Electronics").build();
+        Category child = Category.builder().name("Laptops").build();
+
+        assertEquals("Electronics", parent.getName());
+        assertEquals("Laptops", child.getName());
+    }
+
+    @Test
+    void categoryJacksonRoundTrip() throws IOException {
+        Category category = Category.builder().name("Books").build();
+
+        String json = MAPPER.writeValueAsString(category);
+        Category deserialized = MAPPER.readValue(json, Category.class);
+
+        assertEquals(category.getName(), deserialized.getName());
     }
 }
