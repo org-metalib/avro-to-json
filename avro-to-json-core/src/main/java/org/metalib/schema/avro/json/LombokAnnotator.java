@@ -33,6 +33,8 @@ public class LombokAnnotator extends AbstractAnnotator {
         JAnnotationUse builder = clazz.annotate(clazz.owner().ref("lombok.Builder"));
         builder.param("toBuilder", true);
         clazz.annotate(clazz.owner().ref("lombok.NoArgsConstructor"));
-        clazz.annotate(clazz.owner().ref("lombok.AllArgsConstructor"));
+        if (!clazz.fields().isEmpty()) {
+            clazz.annotate(clazz.owner().ref("lombok.AllArgsConstructor"));
+        }
     }
 }
