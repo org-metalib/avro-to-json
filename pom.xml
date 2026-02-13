@@ -3,7 +3,7 @@
   <groupId>org.metalib.schema.avro.json</groupId>
   <artifactId>avro-to-json</artifactId>
   <packaging>pom</packaging>
-  <version>0.0.4</version>
+  <version>0.0.5-SNAPSHOT</version>
   <name>avro-to-json</name>
   <description>Converts Apache Avro schemas to JSON Schema.</description>
   <url>https://github.com/org-metalib/avro-to-json</url>
@@ -37,12 +37,12 @@
       <dependency>
         <groupId>org.metalib.schema.avro.json</groupId>
         <artifactId>avro-to-json-cli</artifactId>
-        <version>0.0.4</version>
+        <version>0.0.5-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.metalib.schema.avro.json</groupId>
         <artifactId>avro-to-json-core</artifactId>
-        <version>0.0.4</version>
+        <version>0.0.5-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>info.picocli</groupId>
@@ -125,7 +125,7 @@
         <plugin>
           <groupId>org.metalib.schema.avro.json</groupId>
           <artifactId>avro-to-json-maven-plugin</artifactId>
-          <version>0.0.4</version>
+          <version>0.0.5-SNAPSHOT</version>
         </plugin>
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
@@ -237,6 +237,6 @@
     <connection>scm:git:git://github.com/org-metalib/avro-to-json.git</connection>
     <developerConnection>scm:git:https://github.com/org-metalib/avro-to-json.git</developerConnection>
     <url>https://github.com/org-metalib/avro-to-json</url>
-    <tag>v0.0.4</tag>
+    <tag>HEAD</tag>
   </scm>
 </project>
